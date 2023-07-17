@@ -7,14 +7,13 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    run()
-    return render_template("index.html")
+    config = None
+    with open('config.json', 'r', encoding='utf-8') as fp:
+        config = json.load(fp)
 
-
-@app.route('/model')
-def model():
+    print(config)
     model_evaluation = run()
-    return json.dumps(model_evaluation)
+    return render_template("index.html", config=config, model_evaluation=model_evaluation)
 
 
 if __name__ == "__main__":
