@@ -1,5 +1,6 @@
 {
   "type": "training",
   "model": "KNeighborsClassifier",
+  "template": "",
   "title": "Training task: KNeighborsClassifier"
 }

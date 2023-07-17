@@ -3,6 +3,9 @@ import os
 import sklearn
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
+import pickle
+
+model_path = os.path.join(os.path.dirname(__file__), "..", "model/model.pickle")
 
 
 def read_dataset(target):
@@ -29,7 +32,6 @@ def evaluate_classifier_model(classifier, x_test, y_test):
     y_pred = classifier.predict(x_test)
     y_score = classifier.predict_proba(x_test)
 
-    # ------------ 1. Accuracy ------------ #
     accuracy = sklearn.metrics.accuracy_score(y_test, y_pred)
     recall = sklearn.metrics.recall_score(y_test, y_pred, average="micro")
     f1_score = sklearn.metrics.f1_score(y_test, y_pred, average="micro")
@@ -43,12 +45,22 @@ def evaluate_classifier_model(classifier, x_test, y_test):
     }
 
 
+def save_model_file(model):
+    pickle.dump(model, open(model_path, "wb"))
+
+
 def run():
     x, y = read_dataset("Species")
     x_train, x_test, y_train, y_test = split_dataset(x, y)
-    model = train_dataset(x_train, y_train)
-    evaluation = evaluate_classifier_model(model, x_test, y_test)
 
+    if not os.path.exists(model_path):
+        model = train_dataset(x_train, y_train)
+        save_model_file(model)
+    else:
+        with open(model_path, 'rb') as model_file:
+            model = pickle.load(model_file)
+
+    evaluation = evaluate_classifier_model(model, x_test, y_test)
     return evaluation
 
 
