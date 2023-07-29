@@ -50,7 +50,7 @@ def save_model_file(model):
 
 
 def run(config):
-    x, y = read_dataset(config["model"]["target"])
+    x, y = read_dataset(config["target"])
     x_train, x_test, y_train, y_test = split_dataset(x, y)
 
     if not os.path.exists(model_path):
