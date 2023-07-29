@@ -1,6 +1,9 @@
 {
   "type": "training",
-  "model": "KNeighborsClassifier",
+  "model": {
+    "name": "KNeighborsClassifier",
+    "target": "Species"
+  },
   "template": "",
   "title": "Training task: KNeighborsClassifier"
 }

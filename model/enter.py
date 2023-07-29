@@ -49,8 +49,8 @@ def save_model_file(model):
     pickle.dump(model, open(model_path, "wb"))
 
 
-def run():
-    x, y = read_dataset("Species")
+def run(config):
+    x, y = read_dataset(config["model"]["target"])
     x_train, x_test, y_train, y_test = split_dataset(x, y)
 
     if not os.path.exists(model_path):
@@ -62,8 +62,3 @@ def run():
 
     evaluation = evaluate_classifier_model(model, x_test, y_test)
     return evaluation
-
-
-if __name__ == '__main__':
-    res = run()
-    print(res)

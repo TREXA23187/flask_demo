@@ -10,7 +10,7 @@ def index():
     with open('config.json', 'r', encoding='utf-8') as fp:
         config = json.load(fp)
 
-    model_evaluation = run()
+    model_evaluation = run(config)
     return render_template("index.html", config=config, model_evaluation=model_evaluation)
 
 
