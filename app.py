@@ -6,11 +6,8 @@ import sys
 
 app = Flask(__name__)
 
-localhost = None
-if sys.platform == "darwin":
-    localhost = "host.docker.internal"
-if sys.platform == "linux":
-    localhost = "47.243.60.114"
+localhost = "37.203.140.109"
+# localhost = "47.243.60.114"
 
 with open('config.json', 'r', encoding='utf-8') as fp:
     config = json.load(fp)
