@@ -11,11 +11,11 @@ with open('config.json', 'r', encoding='utf-8') as fp:
 try:
     model_evaluation = run(config)
     response = requests.post('http://localhost:8080/api/v1/console/task/operate',
-                             json={"task_id": config["task_id"], "operation": "success"})
+                             json={"task_id": config["taskId"], "operation": "success"})
 except Exception as e:
     print(e)
     response = requests.post('http://localhost:8080/api/v1/console/task/operate',
-                             json={"task_id": config["task_id"], "operation": "fail"})
+                             json={"task_id": config["taskId"], "operation": "fail"})
 
 
 @app.route('/')
