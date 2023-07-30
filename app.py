@@ -2,19 +2,26 @@ from flask import Flask, render_template
 from model.enter import run
 import json
 import requests
+import sys
 
 app = Flask(__name__)
+
+localhost = None
+if sys.platform == "darwin":
+    localhost = "host.docker.internal"
+if sys.platform == "linux":
+    localhost = "47.243.60.114"
 
 with open('config.json', 'r', encoding='utf-8') as fp:
     config = json.load(fp)
 
 try:
     model_evaluation = run(config)
-    response = requests.post('http://localhost:8080/api/v1/console/task/operate',
+    response = requests.post(f'http://{localhost}:8080/api/v1/console/task/operate',
                              json={"task_id": config["taskId"], "operation": "success"})
 except Exception as e:
     print(e)
-    response = requests.post('http://localhost:8080/api/v1/console/task/operate',
+    response = requests.post(f'http://{localhost}:8080/api/v1/console/task/operate',
                              json={"task_id": config["taskId"], "operation": "fail"})
 
 
