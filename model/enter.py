@@ -4,8 +4,7 @@ import sklearn
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
 import pickle
-
-model_path = os.path.join(os.path.dirname(__file__), "..", "model/model.pickle")
+import time
 
 
 def read_dataset(target):
@@ -45,6 +44,9 @@ def evaluate_classifier_model(classifier, x_test, y_test):
     }
 
 
+model_path = os.path.join(os.path.dirname(__file__), "..", "model/model.pickle")
+
+
 def save_model_file(model):
     pickle.dump(model, open(model_path, "wb"))
 
@@ -54,6 +56,7 @@ def run(config):
     x_train, x_test, y_train, y_test = split_dataset(x, y)
 
     if not os.path.exists(model_path):
+        time.sleep(5)
         model = train_dataset(x_train, y_train)
         save_model_file(model)
     else:
