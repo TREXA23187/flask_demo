@@ -6,7 +6,7 @@ import sys
 
 app = Flask(__name__)
 
-localhost = "37.203.140.109"
+localhost = "host.docker.internal"
 # localhost = "47.243.60.114"
 
 with open('config.json', 'r', encoding='utf-8') as fp:
