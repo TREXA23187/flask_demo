@@ -2,7 +2,13 @@
   "taskId": "2",
   "type": "training",
   "model": "KNeighborsClassifier",
-  "target": "Species",
+  "dataLabel": [
+    "SepalLengthCm",
+    "SepalWidthCm",
+    "PetalLengthCm",
+    "PetalWidthCm"
+  ],
+  "targetLabel": "Species",
   "template": "",
   "title": "Training task: KNeighborsClassifier"
 }
