@@ -40,22 +40,12 @@ def index():
 
 @app.route('/predict', methods=['POST'])
 def predict():
-    # if config["type"] == "deployment":
-    if config["type"] == "training":
+    if config["type"] == "deployment":
         with open("model/model.pickle", 'rb') as pickle_file:
             model = pickle.load(pickle_file)
 
-        data = request.get_json()
-        print(data)
-
-        new_data = pd.DataFrame({
-            'SepalLengthCm': [5.1, 6.2],
-            'SepalWidthCm': [3.5, 3.4],
-            'PetalLengthCm': [1.4, 5.4],
-            'PetalWidthCm': [0.2, 2.3]
-        })
-
-        predictions = model.predict(new_data)
+        feature_data = request.get_json()
+        predictions = model.predict(pd.DataFrame(feature_data))
 
         return list(predictions)
 
