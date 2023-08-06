@@ -23,16 +23,13 @@ if config["type"] == "training":
             model_file = f.read()
 
         model_file_base64 = base64.b64encode(model_file).decode()
-        response = requests.post(f'http://{localhost}:8080/api/v1/console/task/operate',
-                                 json={"task_id": config["taskId"], "operation": "success",
-                                       "model_file": model_file_base64})
-
-
-
+        requests.post(f'http://{localhost}:8080/api/v1/console/task/operate',
+                      json={"task_id": config["taskId"], "operation": "success",
+                            "model_file": model_file_base64})
     except Exception as e:
         print(e)
-        response = requests.post(f'http://{localhost}:8080/api/v1/console/task/operate',
-                                 json={"task_id": config["taskId"], "operation": "fail"})
+        requests.post(f'http://{localhost}:8080/api/v1/console/task/operate',
+                      json={"task_id": config["taskId"], "operation": "fail"})
 
 
 @app.route('/')
@@ -43,17 +40,25 @@ def index():
 
 @app.route('/predict', methods=['POST'])
 def predict():
-    if config["type"] == "deployment":
-        with open("model/model.pickle", 'rb') as pickle_file:
-            model = pickle.load(pickle_file)
+    try:
+        if config["type"] == "deployment":
+            with open("model/model.pickle", 'rb') as pickle_file:
+                model = pickle.load(pickle_file)
 
-        feature_data = request.get_json()
-        for key in feature_data.keys():
-            feature_data[key] = [feature_data[key]]
+            feature_data = request.get_json()
+            for key in feature_data.keys():
+                feature_data[key] = [feature_data[key]]
 
-        predictions = model.predict(pd.DataFrame(feature_data))
+            predictions = model.predict(pd.DataFrame(feature_data))
 
-        return list(predictions)
+            requests.post(f'http://{localhost}:8080/api/v1/console/task/operate',
+                          json={"task_id": config["taskId"], "operation": "success"})
+
+            return list(predictions)
+    except Exception as e:
+        print(e)
+        requests.post(f'http://{localhost}:8080/api/v1/console/task/operate',
+                      json={"task_id": config["taskId"], "operation": "fail"})
 
 
 if __name__ == "__main__":
