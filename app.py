@@ -54,11 +54,13 @@ def predict():
             requests.post(f'http://{localhost}:8080/api/v1/console/task/operate',
                           json={"task_id": config["taskId"], "operation": "success"})
 
-            return list(predictions)
+            return {"code": 0, "data": list(predictions)}
     except Exception as e:
         print(e)
         requests.post(f'http://{localhost}:8080/api/v1/console/task/operate',
                       json={"task_id": config["taskId"], "operation": "fail"})
+
+        return {"code": -1, "data": str(e)}
 
 
 if __name__ == "__main__":
