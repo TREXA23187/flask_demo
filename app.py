@@ -8,8 +8,8 @@ import pandas as pd
 
 app = Flask(__name__)
 
-# localhost = "host.docker.internal"
-localhost = "localhost"
+localhost = "host.docker.internal"
+# localhost = "localhost"
 # localhost = "47.243.60.114"
 
 with open('config.json', 'r', encoding='utf-8') as fp:
@@ -26,6 +26,9 @@ if config["type"] == "training":
         response = requests.post(f'http://{localhost}:8080/api/v1/console/task/operate',
                                  json={"task_id": config["taskId"], "operation": "success",
                                        "model_file": model_file_base64})
+
+
+
     except Exception as e:
         print(e)
         response = requests.post(f'http://{localhost}:8080/api/v1/console/task/operate',
