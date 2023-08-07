@@ -61,8 +61,8 @@ def predict():
         requests.post(f'http://{localhost}:8080/api/v1/console/task/operate',
                       json={"task_id": config["taskId"], "operation": "success"})
 
-        with open('./model/label_int_tag.json', 'rb') as f:
-            label_int_tag_json = json.load(f)
+        with open('./model/label_int_tag.json', 'r') as label_int_tag_file:
+            label_int_tag_json = json.load(label_int_tag_file)
         decoded_labels = [label_int_tag_json["int_to_label"][str(i)] for i in predictions]
 
         return {"code": 0, "data": decoded_labels}
