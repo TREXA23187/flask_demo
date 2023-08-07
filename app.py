@@ -46,8 +46,7 @@ def index():
 @app.route('/predict', methods=['POST'])
 def predict():
     try:
-        # if config["type"] == "deployment":
-        if config["type"] == "training":
+        if config["type"] == "deployment":
             with open("model/model.pickle", 'rb') as pickle_file:
                 model = pickle.load(pickle_file)
 
