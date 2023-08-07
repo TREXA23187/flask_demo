@@ -45,35 +45,33 @@ def index():
 
 @app.route('/predict', methods=['POST'])
 def predict():
-    # try:
-    if config["type"] == "deployment":
-        with open("model/model.pickle", 'rb') as pickle_file:
-            model = pickle.load(pickle_file)
+    try:
+        if config["type"] == "deployment":
+            with open("model/model.pickle", 'rb') as pickle_file:
+                model = pickle.load(pickle_file)
 
-        feature_data = request.get_json()
-        print(feature_data)
-        for key in feature_data.keys():
-            feature_data[key] = [feature_data[key]]
+            feature_data = request.get_json()
+            print(feature_data)
+            for key in feature_data.keys():
+                feature_data[key] = [feature_data[key]]
 
-        predictions = model.predict(pd.DataFrame(feature_data))
-        print(predictions)
+            predictions = model.predict(pd.DataFrame(feature_data))
+            print(predictions)
 
+            requests.post(f'http://{localhost}:8080/api/v1/console/task/operate',
+                          json={"task_id": config["taskId"], "operation": "success"})
+
+            with open('./model/label_int_tag.json', 'rb') as f:
+                label_int_tag = json.load(f)
+            decoded_labels = [label_int_tag["int_to_label"][int(i)] for i in predictions]
+
+            return {"code": 0, "data": decoded_labels}
+    except Exception as e:
+        print(e)
         requests.post(f'http://{localhost}:8080/api/v1/console/task/operate',
-                      json={"task_id": config["taskId"], "operation": "success"})
+                      json={"task_id": config["taskId"], "operation": "fail"})
 
-        with open('./model/label_int_tag.json', 'rb') as f:
-            label_int_tag = json.load(f)
-        decoded_labels = [label_int_tag["int_to_label"][str(i)] for i in predictions]
-
-        return {"code": 0, "data": decoded_labels}
-
-
-# except Exception as e:
-#     print(e)
-#     requests.post(f'http://{localhost}:8080/api/v1/console/task/operate',
-#                   json={"task_id": config["taskId"], "operation": "fail"})
-#
-#     return {"code": -1, "data": str(e)}
+        return {"code": -1, "data": str(e)}
 
 
 if __name__ == "__main__":
