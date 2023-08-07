@@ -1,0 +1,1 @@
+{"label_to_int": {"Iris-setosa": 49, "Iris-versicolor": 99, "Iris-virginica": 149}, "int_to_label": {"49": "Iris-setosa", "99": "Iris-versicolor", "149": "Iris-virginica"}}

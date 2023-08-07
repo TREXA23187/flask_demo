@@ -8,8 +8,8 @@ import pandas as pd
 
 app = Flask(__name__)
 
-localhost = "host.docker.internal"
-# localhost = "localhost"
+# localhost = "host.docker.internal"
+localhost = "localhost"
 # localhost = "47.243.60.114"
 
 with open('config.json', 'r', encoding='utf-8') as fp:
@@ -51,10 +51,12 @@ def predict():
                 model = pickle.load(pickle_file)
 
             feature_data = request.get_json()
+            print(feature_data)
             for key in feature_data.keys():
                 feature_data[key] = [feature_data[key]]
 
             predictions = model.predict(pd.DataFrame(feature_data))
+            print(predictions)
 
             requests.post(f'http://{localhost}:8080/api/v1/console/task/operate',
                           json={"task_id": config["taskId"], "operation": "success"})
