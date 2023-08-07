@@ -1,5 +1,5 @@
 {
-  "taskId": "2",
+  "taskId": "39",
   "type": "training",
   "model": "KNeighborsClassifier",
   "dataLabel": [
@@ -9,6 +9,24 @@
     "PetalWidthCm"
   ],
   "targetLabel": "Species",
-  "template": "",
-  "title": "Training task: KNeighborsClassifier"
+  "title": "training: KNeighborsClassifier",
+  "hyperParameters": {
+    "algorithm": [
+      "ball_tree",
+      "kd_tree",
+      "brute"
+    ],
+    "metric": [
+      "euclidean",
+      "manhattan"
+    ],
+    "n_neighbors": [
+      9,
+      35
+    ],
+    "weights": [
+      "uniform",
+      "distance"
+    ]
+  }
 }

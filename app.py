@@ -15,6 +15,7 @@ localhost = "host.docker.internal"
 with open('config.json', 'r', encoding='utf-8') as fp:
     config = json.load(fp)
 
+model_evaluation = None
 if config["type"] == "training":
     try:
         model_evaluation = run(config)
@@ -22,12 +23,16 @@ if config["type"] == "training":
         with open('./model/model.pickle', 'rb') as f:
             model_file = f.read()
 
+        with open('./model/label_int_tag.json', 'rb') as f:
+            label_int_tag = json.load(f)
+
         model_file_base64 = base64.b64encode(model_file).decode()
         requests.post(f'http://{localhost}:8080/api/v1/console/task/operate',
                       json={"task_id": config["taskId"], "operation": "success",
-                            "model_file": model_file_base64})
+                            "model_file": model_file_base64, "label_int_tag": json.dumps(label_int_tag)})
     except Exception as e:
-        print(e)
+        print("error: ", e)
+        model_evaluation = {}
         requests.post(f'http://{localhost}:8080/api/v1/console/task/operate',
                       json={"task_id": config["taskId"], "operation": "fail"})
 
@@ -41,7 +46,8 @@ def index():
 @app.route('/predict', methods=['POST'])
 def predict():
     try:
-        if config["type"] == "deployment":
+        # if config["type"] == "deployment":
+        if config["type"] == "training":
             with open("model/model.pickle", 'rb') as pickle_file:
                 model = pickle.load(pickle_file)
 
@@ -54,7 +60,11 @@ def predict():
             requests.post(f'http://{localhost}:8080/api/v1/console/task/operate',
                           json={"task_id": config["taskId"], "operation": "success"})
 
-            return {"code": 0, "data": list(predictions)}
+            with open('./model/label_int_tag.json', 'rb') as f:
+                label_int_tag = json.load(f)
+            decoded_labels = [label_int_tag["int_to_label"][str(i)] for i in predictions]
+
+            return {"code": 0, "data": decoded_labels}
     except Exception as e:
         print(e)
         requests.post(f'http://{localhost}:8080/api/v1/console/task/operate',
