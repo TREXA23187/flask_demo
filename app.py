@@ -8,9 +8,9 @@ import pandas as pd
 
 app = Flask(__name__)
 
-# localhost = "host.docker.internal"
+# localhost = "host.docker.internal:8080"
 # localhost = "localhost"
-localhost = "47.243.60.114"
+localhost = "47.243.60.114:3000"
 
 with open('config.json', 'r', encoding='utf-8') as fp:
     config = json.load(fp)
@@ -27,7 +27,7 @@ if config["type"] == "training":
             label_int_tag = json.load(f)
 
         model_file_base64 = base64.b64encode(model_file).decode()
-        requests.post(f'http://{localhost}:8080/api/v1/console/task/operate',
+        requests.post(f'http://{localhost}/api/v1/console/task/operate',
                       json={"task_id": config["taskId"], "operation": "success",
                             "model_file": model_file_base64, "label_int_tag": json.dumps(label_int_tag)})
     except Exception as e:
