@@ -8,9 +8,9 @@ import pandas as pd
 
 app = Flask(__name__)
 
-localhost = "host.docker.internal"
+# localhost = "host.docker.internal"
 # localhost = "localhost"
-# localhost = "47.243.60.114"
+localhost = "47.243.60.114"
 
 with open('config.json', 'r', encoding='utf-8') as fp:
     config = json.load(fp)
