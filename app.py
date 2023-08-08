@@ -33,7 +33,7 @@ if config["type"] == "training":
     except Exception as e:
         print("error: ", e)
         model_evaluation = {}
-        requests.post(f'http://{localhost}:8080/api/v1/console/task/operate',
+        requests.post(f'http://{localhost}/api/v1/console/task/operate',
                       json={"task_id": config["taskId"], "operation": "fail"})
 
 
@@ -58,7 +58,7 @@ def predict():
             predictions = model.predict(pd.DataFrame(feature_data))
             print(predictions)
 
-            requests.post(f'http://{localhost}:8080/api/v1/console/task/operate',
+            requests.post(f'http://{localhost}/api/v1/console/task/operate',
                           json={"task_id": config["taskId"], "operation": "success"})
 
             with open('./model/label_int_tag.json', 'r') as label_int_tag_file:
@@ -68,7 +68,7 @@ def predict():
             return {"code": 0, "data": decoded_labels}
     except Exception as e:
         print(e)
-        requests.post(f'http://{localhost}:8080/api/v1/console/task/operate',
+        requests.post(f'http://{localhost}/api/v1/console/task/operate',
                       json={"task_id": config["taskId"], "operation": "fail"})
 
         return {"code": -1, "msg": str(e)}
