@@ -5,12 +5,18 @@ import requests
 import base64
 import pickle
 import pandas as pd
+import os
+
+from utils.eda import data_summary, descriptive_statistics, correlation_matrix
+from utils.evaluate import confusion_matrix
 
 app = Flask(__name__)
 
-# localhost = "host.docker.internal:8080"
-# localhost = "localhost"
-localhost = "47.243.60.114:3000"
+localhost = "host.docker.internal:8080"
+# localhost = "localhost:8080"
+# localhost = "47.243.60.114:3000"
+
+dataset = pd.read_csv(os.path.join(os.path.dirname(__file__), "data/data.csv"))
 
 with open('config.json', 'r', encoding='utf-8') as fp:
     config = json.load(fp)
@@ -40,7 +46,35 @@ if config["type"] == "training":
 @app.route('/')
 def index():
     if config["type"] == "training":
-        return render_template("index.html", config=config, model_evaluation=model_evaluation)
+        data_head, data_info = data_summary(dataset)
+        data_describe = descriptive_statistics(dataset)
+        corr_matrix_image_path = "static/corr_matrix.png"
+        correlation_matrix(dataset.drop([config["targetLabel"]], axis=1), corr_matrix_image_path)
+
+        eda = {
+            "data_head": data_head.to_html(),
+            "data_info": data_info.to_html(),
+            "data_describe": data_describe.to_html(),
+            "corr_matrix_image": corr_matrix_image_path
+        }
+
+        confusion_matrix_image_path = "static/confusion_matrix.png"
+        confusion_matrix(cm=model_evaluation["confusion_matrix"], labels=dataset[config["targetLabel"]].unique(),
+                         image_save_path=confusion_matrix_image_path)
+
+        model_evaluation_html = {
+            "model_evaluation_report": pd.DataFrame(model_evaluation["classification_report"]).T.to_html(),
+            "confusion_matrix_image": confusion_matrix_image_path
+        }
+        if model_evaluation["optimal_hyper_parameters"]:
+            optimal_hyper_parameters = pd.DataFrame(model_evaluation["optimal_hyper_parameters"],
+                                                    index=model_evaluation["optimal_hyper_parameters"].keys()).T
+            optimal_hyper_parameters = optimal_hyper_parameters.iloc[:, 0:1]
+            optimal_hyper_parameters.columns = ["value"]
+
+            model_evaluation_html["optimal_hyper_parameters"] = optimal_hyper_parameters.to_html()
+
+        return render_template("index.html", config=config, model_evaluation=model_evaluation_html, eda=eda)
 
 
 @app.route('/predict', methods=['POST'])
@@ -51,12 +85,10 @@ def predict():
                 model = pickle.load(pickle_file)
 
             feature_data = request.get_json()
-            print(feature_data)
             for key in feature_data.keys():
                 feature_data[key] = [feature_data[key]]
 
             predictions = model.predict(pd.DataFrame(feature_data))
-            print(predictions)
 
             requests.post(f'http://{localhost}/api/v1/console/task/operate',
                           json={"task_id": config["taskId"], "operation": "success"})

@@ -4,6 +4,7 @@ import sklearn
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.model_selection import GridSearchCV
+from sklearn.metrics import classification_report
 import pickle
 import warnings
 import json
@@ -57,15 +58,10 @@ def advance_operate(x, y, hyper_parameters):
 def evaluate_classifier_model(classifier, x_test, y_test):
     y_pred = classifier.predict(x_test)
 
-    accuracy = sklearn.metrics.accuracy_score(y_test, y_pred)
-    recall = sklearn.metrics.recall_score(y_test, y_pred, average="micro")
-    f1_score = sklearn.metrics.f1_score(y_test, y_pred, average="micro")
     confusion_matrix = sklearn.metrics.confusion_matrix(y_test, y_pred)
 
     return {
-        "accuracy": accuracy,
-        "recall": recall,
-        "f1_score": f1_score,
+        "classification_report": classification_report(y_test, y_pred, output_dict=True),
         "confusion_matrix": confusion_matrix.tolist()
     }
 

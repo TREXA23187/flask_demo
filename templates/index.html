@@ -2,11 +2,69 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{{config.title}}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ config.title }}</title>
+    <style>
+        .container {
+            display: flex;
+        }
+
+        .left, .right {
+            flex: 1;
+            padding: 0 20px;
+            border: 1px black solid;
+        }
+
+    </style>
 </head>
+
 <body>
-<div>{{config.title}}</div>
-<div>Model Evaluation:</div>
-<div>{{model_evaluation}}</div>
+<div>
+    <div style="margin-left: 10px"><h2>{{ config.title }}</h2></div>
+
+    <div class="container">
+        <div class="left">
+            <div>
+                <h3>Data Analysis:</h3>
+                <div><h4>Data Summary:</h4>
+                    <div>{{ eda.data_head | safe }}</div>
+                </div>
+                <div><h4>Data Information:</h4>
+                    <div>{{ eda.data_info | safe }}</div>
+                </div>
+                <div><h4>Descriptive Statistics:</h4>
+                    <div>{{ eda.data_describe | safe }}</div>
+                </div>
+                <div>
+                    <h4>Correlation Matrix:</h4>
+                    <img src="{{ url_for('static', filename="corr_matrix.png") }}"
+                         style="width: 500px;height: 450px"/>
+                </div>
+            </div>
+        </div>
+        <div class=" right">
+            <div>
+                <h3>Model Evaluation:</h3>
+                <div>
+                    <h4>Classification Report:</h4>
+                    <div>{{ model_evaluation.model_evaluation_report | safe }}</div>
+                </div>
+
+                <div>
+                    <h4>Optimal Hyper-parameters:</h4>
+                    <div>{{ model_evaluation.optimal_hyper_parameters | safe }}</div>
+                </div>
+
+                <div>
+                    <h4>Confusion Matrix:</h4>
+                    <img src="{{ url_for('static', filename="confusion_matrix.png") }}"
+                         style="width: 500px;height: 450px"/>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
 </body>
 </html>
