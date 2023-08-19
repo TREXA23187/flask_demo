@@ -48,7 +48,7 @@ def index():
     if config["type"] == "training":
         data_head, data_info = data_summary(dataset)
         data_describe = descriptive_statistics(dataset)
-        corr_matrix_image_path = "static/corr_matrix.png"
+        corr_matrix_image_path = os.path.join(os.path.dirname(__file__), "static/corr_matrix.png")
         correlation_matrix(dataset.drop([config["targetLabel"]], axis=1), corr_matrix_image_path)
 
         eda = {
@@ -58,7 +58,7 @@ def index():
             "corr_matrix_image": corr_matrix_image_path
         }
 
-        confusion_matrix_image_path = "static/confusion_matrix.png"
+        confusion_matrix_image_path = os.path.join(os.path.dirname(__file__), "static/confusion_matrix.png")
         confusion_matrix(cm=model_evaluation["confusion_matrix"], labels=dataset[config["targetLabel"]].unique(),
                          image_save_path=confusion_matrix_image_path)
 
